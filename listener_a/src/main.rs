@@ -4,6 +4,8 @@ use std::io::prelude::*;
 use serde_json as json;
 use serde::Deserialize;
 
+const PORT: u16 = 8080;
+
 #[derive(Deserialize)]
 pub struct User {
     pub name: String,
@@ -11,7 +13,7 @@ pub struct User {
 }
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
+    let listener = TcpListener::bind(format!("127.0.0.1:{}", PORT)).unwrap();
 
     println!("Listening on {}", listener.local_addr().unwrap());
     for stream in listener.incoming() {

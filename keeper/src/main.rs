@@ -35,9 +35,21 @@ impl UpstreamState<'_> {
     }
 
     fn decide_upstream(&mut self) -> Result<TcpStream, Box<dyn std::error::Error>> {
+        let next = self.index + 1;
+        let server  = match self.config.servers.get(next) {
+            Some(server) => {
+                self.index = next;
+                server
+            },
+            None => {
+                self.index = 0;
+                self.config.servers.get(0).expect("Should have at least one server")
+            }
+        };
         let addr = format!(
             "{}:{}",
-            self.config.servers[self.index].address, self.config.servers[self.index].port
+            server.address,
+            server.port,
         );
         let upstream = TcpStream::connect(addr)?;
         Ok(upstream)
